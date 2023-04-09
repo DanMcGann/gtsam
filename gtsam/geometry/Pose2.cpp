@@ -62,6 +62,25 @@ Matrix3 Pose2::matrix() const {
 }
 
 /* ************************************************************************* */
+Vector Pose2::matrixElements(OptionalJacobian<6, 3> Hself) const {
+  Matrix3 mat = matrix();
+  Matrix nconst_mat = mat.block<2, 3>(0, 0);
+  Matrix nconst_mat_transpose = nconst_mat.transpose();
+  Vector nconst_vector = Eigen::Map<Vector>(nconst_mat_transpose.data(), nconst_mat_transpose.size());
+
+  if (Hself)
+  {
+    *Hself << 0, 0, nconst_mat(0, 1),          // R00
+        0, 0, -nconst_mat(0, 0),               // R01
+        nconst_mat(0, 0), nconst_mat(0, 1), 0, // tx
+        0, 0, nconst_mat(1, 1),                // R10
+        0, 0, -nconst_mat(1, 0),               // R11
+        nconst_mat(1, 0), nconst_mat(1, 1), 0; // ty
+  }
+  return nconst_vector;
+}
+
+/* ************************************************************************* */
 void Pose2::print(const string& s) const {
   std::cout << (s.empty() ? s : s + " ") << *this << std::endl;
 }

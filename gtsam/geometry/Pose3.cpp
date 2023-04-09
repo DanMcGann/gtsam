@@ -322,6 +322,25 @@ Matrix4 Pose3::matrix() const {
 }
 
 /* ************************************************************************* */
+Vector Pose3::matrixElements(OptionalJacobian<12, 6> Hself) const
+{
+  Matrix4 mat = matrix();
+  Matrix nconst_mat = mat.block<3, 4>(0, 0);
+  Matrix nconst_mat_transpose = nconst_mat.transpose();
+  Vector nconst_vector = Eigen::Map<Vector>(nconst_mat_transpose.data(), nconst_mat_transpose.size());
+  if (Hself)
+  {
+    (*Hself).block<3, 3>(0, 0) = skewSymmetric(mat.block<1, 3>(0, 0));
+    (*Hself).block<1, 3>(3, 3) = mat.block<1, 3>(0, 0);
+    (*Hself).block<3, 3>(4, 0) = skewSymmetric(mat.block<1, 3>(1, 0));
+    (*Hself).block<1, 3>(7, 3) = mat.block<1, 3>(1, 0);
+    (*Hself).block<3, 3>(8, 0) = skewSymmetric(mat.block<1, 3>(2, 0));
+    (*Hself).block<1, 3>(11, 3) = mat.block<1, 3>(2, 0);
+  }
+  return nconst_vector;
+}
+
+/* ************************************************************************* */
 Pose3 Pose3::transformPoseFrom(const Pose3& aTb, OptionalJacobian<6, 6> Hself,
                                                  OptionalJacobian<6, 6> HaTb) const {
   const Pose3& wTa = *this;

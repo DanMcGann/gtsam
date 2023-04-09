@@ -58,6 +58,9 @@ namespace gtsam {
     /// Constructor from angle in radians == exponential map at identity
     Rot2(double theta) : c_(cos(theta)), s_(sin(theta)) {}
 
+    /// Constructor from matrix
+    explicit Rot2(const Matrix3& mat) : c_(mat(0,0)), s_(mat(0,1)) {}
+
     /// Named constructor from angle in radians
     static Rot2 fromAngle(double theta) {
       return Rot2(theta);

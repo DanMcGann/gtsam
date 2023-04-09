@@ -309,6 +309,9 @@ public:
   /** convert to 4*4 matrix */
   Matrix4 matrix() const;
 
+  /** retrieves the non-constant matrix elements as a vector, in row major order **/
+  Vector matrixElements(OptionalJacobian<12, 6> Hself = boost::none) const;
+
   /** 
     * Assuming self == wTa, takes a pose aTb in local coordinates 
     * and transforms it to world coordinates wTb = wTa * aTb.
