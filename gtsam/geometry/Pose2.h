@@ -263,6 +263,9 @@ public:
   //// return transformation matrix
   GTSAM_EXPORT Matrix3 matrix() const;
 
+  /** retrieves the non-constant matrix elements as a vector, in row major order **/
+  Vector matrixElements(OptionalJacobian<6, 3> Hself = boost::none) const;
+
   /**
    * Calculate bearing to a landmark
    * @param point 2D location of landmark

@@ -466,6 +466,20 @@ TEST( Pose2, matrix )
 }
 
 /* ************************************************************************* */
+TEST(Pose2, matrixElements) {
+  Pose2 pose(-1, 23, -5);
+  Vector expect_elems(6);
+  expect_elems << 0.283, -0.958, -1.0,  0.95892427,  0.28366219, 23.0;
+
+  Matrix actualH;
+  EXPECT(assert_equal(expect_elems, pose.matrixElements(actualH), 1e-3));
+
+  std::function<Vector(const Pose2&)> f = [](const Pose2& T) { return T.matrixElements(); };
+  Matrix numericalH = numericalDerivative11<Vector, Pose2>(f, pose);
+  EXPECT(assert_equal(numericalH, actualH, 1e-6));
+}
+
+/* ************************************************************************* */
 TEST( Pose2, compose_matrix )
 {
   Pose2 gT1(M_PI/2.0, Point2(1,2)); // robot at (1,2) looking towards y

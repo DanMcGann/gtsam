@@ -303,6 +303,22 @@ TEST(Pose3, rotation) {
 }
 
 /* ************************************************************************* */
+TEST(Pose3, matrixElements) {
+  Pose3 pose(Rot3::RzRyRx(1, -3, 2), Point3(-1, 23, -5));
+  Vector expect_elems(12);
+  expect_elems << 0.411, -0.441, 0.796, -1., 
+                 -0.900, -0.332, 0.280,   23.,
+                  0.141, -0.833, -0.534, -5.;
+
+  Matrix actualH;
+  EXPECT(assert_equal(expect_elems, pose.matrixElements(actualH), 1e-3));
+
+  std::function<Vector(const Pose3&)> f = [](const Pose3& T) { return T.matrixElements(); };
+  Matrix numericalH = numericalDerivative11<Vector, Pose3>(f, pose);
+  EXPECT(assert_equal(numericalH, actualH, 1e-6));
+}
+
+/* ************************************************************************* */
 TEST(Pose3, Adjoint_compose_full)
 {
   // To debug derivatives of compose, assert that
